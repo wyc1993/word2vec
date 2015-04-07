@@ -14,9 +14,28 @@ manager.add_command("runserver", Server('0.0.0.0',port=8008, threaded=True))
 def createall():
     "Create all database tables"
     db.create_all()
+    _session = db.session
 
-    Word.add(Word("test"))
-    Word.add(Word("hello"))
+    filename = app.config["INIT_DATA"]
+    print filename
+    with open(filename, 'r') as f:
+        lines = f.readlines()
+    for line in lines:
+        line = unicode(line, "utf-8")
+        print line
+        words = line.split(",")
+        key_word = words[0]
+        heat_degree = float(words[1])
+        
+        i = 2
+        while i < len(words)-1:
+            word = words[i]
+            weight = float(words[i+1])
+            _session.add(Relation(key_word, word, weight))
+            i = i+2
+        _session.add(Word(key_word, heat_degree, words[i]))
+        
+    _session.commit()
 
 @manager.command
 def dropall():
