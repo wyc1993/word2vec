@@ -19,12 +19,11 @@ class Relation(db.Model):
         db.session.add(self)
         db.session.commit()
 
-from Word import get_url
 
 def get_relations(source):
     relations = Relation.query.filter_by(source=source).all()
     result = {}
     for relation in relations:
         result[relation.target.encode("utf-8")] = relation.weight
-    return {"url": get_url(source), "rel": result}
+    return {"rel": result}
     

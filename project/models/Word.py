@@ -1,4 +1,3 @@
-from flask import flash
 from project import db
 
 class Word(db.Model):
@@ -6,15 +5,13 @@ class Word(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64))
     heat = db.Column(db.Float)
-    url = db.Column(db.String(128))
 
-    def __init__(self, name, heat, url):
+    def __init__(self, name, heat):
         self.name = name
         self.heat = heat
-        self.url = url
 
     def __repr__(self):
-        return "%d: %s %f %s" %(self.id, self.name.encode("utf-8"), self.heat, self.url.encode("utf-8"))
+        return "%d: %s %f" %(self.id, self.name.encode("utf-8"), self.heat)
 
     def add(self):
         db.session.add(self)
@@ -26,10 +23,3 @@ def get_top_heat(i):
     for word in words:
         result.append(word.name.encode("utf-8"))
     return result
-
-def get_url(s):
-    words = db.session.query(Word).filter_by(name=s).all()
-    if len(words) > 0:
-        return words[0].url
-    else:
-        return ""

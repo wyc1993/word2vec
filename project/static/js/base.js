@@ -30,7 +30,10 @@ function postJson(url, param, success){
                 data:JSON.stringify(param),
                 dataType:"json",
                 contentType:"application/json",
-                success: success
+                success: success,
+                error: function(){
+                    alert("error")
+                }
     })
 }
 

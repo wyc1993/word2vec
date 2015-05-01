@@ -1,6 +1,7 @@
 function render(data){
   var node_color = '#38F'
   var node_mouse_color = "#4169e1"
+
   $("#graph").cytoscape({
         layout: {name: "concentric"} ,
         style: cytoscape.stylesheet()
@@ -11,7 +12,9 @@ function render(data){
                   'width': 'data(weight)',
                   'height': 'data(weight)', 
                   'text-valign': 'center', 
-                  'text-halign': 'center'
+                  'text-halign': 'center',
+                  'text-outline-width': 4,
+                  'text-outline-color': node_color
               })
             .selector("edge")
               .css({
@@ -30,31 +33,25 @@ function render(data){
   })
 
   $.each(data.word.rel, function(i, item){
-        cy.add([ { group: "nodes", data: { id: i, pre_weight:0, weight: item*80 + 30, center: false } }, 
-                    { group: "edges", data: { id: "e"+i, source: data.center,  target: i, weight: 5} }
+        cy.add([ { group: "nodes", data: { id: i, pre_weight:0, weight: item*80 + 30, center: false } }  
+                    ,{ group: "edges", data: { id: "e"+i, source: data.center,  target: i, weight: 0.1} }
         ])
   })
 
   cy.nodes().on("click", function(){    
       if (this.data("center")){
-          window.open(this.data("url"))
       }else{
           cy.center(this)
           newword = this.id()
-          postJson("/get_vec", {"word": newword}, function(data){
-            render({ center: newword,  word: data} )
-          })  
+          submit_word(newword)
       }
   });
 
   cy.nodes().on("mouseover", function(){
     this.css("background", node_mouse_color).css("opacity", 0.7)
-    w = this.data("weight")
-    this.data("pre_weight", w)
-    this.data("weight", 200)
   })
   cy.nodes().on("mouseout", function(){
     this.css("background-color", node_color).css("opacity", 1)
-    this.data('weight', this.data("pre_weight"))
   })
+
 }
